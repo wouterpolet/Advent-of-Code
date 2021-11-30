@@ -1,0 +1,2 @@
+class NeedNewInputError(Exception):
+    pass
