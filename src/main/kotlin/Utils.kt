@@ -15,7 +15,7 @@ fun readInput(year: Int, day: Int, instance: Input) = readInput(year, day, insta
 fun readInput(year: Int, day: Int, name: String) = Path(
     "src",
     "main", "kotlin", "aoc$year", "day${if (day < 10) "0$day" else day}", "$name.txt"
-).toFile().readLines().map { it.trim() }.filter { it.isNotEmpty() }
+).toFile().readLines()
 
 /**
  * Converts string to md5 hash.
