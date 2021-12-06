@@ -21,3 +21,9 @@ fun readInput(year: Int, day: Int, name: String) = Path(
  * Converts string to md5 hash.
  */
 fun String.md5(): String = BigInteger(1, MessageDigest.getInstance("md5").digest(toByteArray())).toString(16)
+
+fun <T> List<T>.permutations(): List<List<T>> =
+    if (size == 1)
+        listOf(this)
+    else
+        map { x -> (this - x).permutations().map { listOf(x) + it } }.flatten()
