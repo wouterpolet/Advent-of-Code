@@ -1,21 +1,63 @@
 package aoc2021.day10
 
 import readInput
+import java.util.*
 
 val year = 2021
 val day = 10
 
 fun main() {
+
+    val scoreMap = mapOf(Pair(')', 3), Pair(']', 57), Pair('}', 1197), Pair('>', 25137))
+    val opening = setOf('(', '[', '{', '<')
+    val closing = setOf(')', ']', '}', '>')
+    val openCloseMap = mapOf(Pair('(', ')'), Pair('[', ']'), Pair('{', '}'), Pair('<', '>'))
+
     fun part1(input: List<String>): Int {
-        return 0
+//        val corrupted = input.filter {
+//            val s1 = it.filter {
+//                opening.contains(it)
+//            }.length
+//            val s2 = it.filter {
+//                closing.contains(it)
+//            }.length
+//            s1 == s2
+//        }
+        return input.map {
+            val s = LinkedList<Char>()
+            var score = 0
+            it.forEach {
+                if (opening.contains(it)) {
+                    s.push(it)
+                } else if (closing.contains(it)) {
+                    if (score == 0 && s.isNotEmpty() && openCloseMap[s.pop()]!! != it) {
+                        score = scoreMap[it]!!
+                    }
+                }
+            }
+            score
+        }.sum()
     }
 
     fun part2(input: List<String>): Int {
-        return 0
+        val good = input.filter {
+            val s = LinkedList<Char>()
+            var bad = false
+            it.forEach {
+                if (opening.contains(it)) {
+                    s.push(it)
+                } else if (closing.contains(it)) {
+                    if (!bad&& s.isNotEmpty() && openCloseMap[s.pop()]!! != it) {
+                        bad = true
+                    }
+                }
+            }
+            bad
+        }
     }
 
-//    val testInput = readInput(year, day, Input.Test)
-//    check(part1(testInput) == 1)
+    val testInput = readInput(year, day, Input.Test)
+    check(part1(testInput) == 26397)
 //    check(part2(testInput) == 1)
 
     val input = readInput(year, day, Input.Real)
