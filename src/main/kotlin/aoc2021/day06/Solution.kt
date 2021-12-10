@@ -26,16 +26,13 @@ fun main() {
     fun part2(input: List<String>): Long {
         val fish = HashMap<Int, Long>().toMutableMap()
         input.first().split(',').forEach { fish[it.toInt()] = fish.getOrDefault(it.toInt(), 0) + 1 }
-        for (f in 1..8) {
-            fish[f] = fish.getOrDefault(f, 0)
-        }
         for (k in 1..256) {
-            val temp = fish.getOrDefault(0, 0)
+            val temp = fish[0] ?: 0
             for (f in 1..8) {
-                fish[f-1] = fish[f]!!
+                fish[f-1] = fish[f] ?: 0
             }
             fish[8] = temp
-            fish[6] = fish[6]!! + temp
+            fish[6] = (fish[6] ?: 0) + temp
         }
         return fish.map { (_, v) -> v }.sum()
     }
