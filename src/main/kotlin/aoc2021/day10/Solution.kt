@@ -9,6 +9,7 @@ val day = 10
 fun main() {
 
     val scoreMap = mapOf(Pair(')', 3), Pair(']', 57), Pair('}', 1197), Pair('>', 25137))
+    val scoreClosingMap = mapOf(Pair(')', 1), Pair(']', 2), Pair('}', 3), Pair('>', 4))
     val opening = setOf('(', '[', '{', '<')
     val closing = setOf(')', ']', '}', '>')
     val openCloseMap = mapOf(Pair('(', ')'), Pair('[', ']'), Pair('{', '}'), Pair('<', '>'))
@@ -39,26 +40,42 @@ fun main() {
         }.sum()
     }
 
-    fun part2(input: List<String>): Int {
-        val good = input.filter {
+    fun part2(input: List<String>): Long {
+        val scores = input.filter {
             val s = LinkedList<Char>()
-            var bad = false
+            var good = true
             it.forEach {
                 if (opening.contains(it)) {
                     s.push(it)
                 } else if (closing.contains(it)) {
-                    if (!bad&& s.isNotEmpty() && openCloseMap[s.pop()]!! != it) {
-                        bad = true
+                    if (good && s.isNotEmpty() && openCloseMap[s.pop()]!! != it) {
+                        good = false
                     }
                 }
             }
-            bad
-        }
+            good
+        }.map {
+            val s = LinkedList<Char>()
+            it.forEach {
+                if (opening.contains(it)) {
+                    s.push(it)
+                } else if (closing.contains(it)) {
+                    s.pop()
+                }
+            }
+            var score = 0L
+            while (s.isNotEmpty()) {
+                score *= 5
+                score += scoreClosingMap[openCloseMap[s.pop()]!!]!!
+            }
+            score
+        }.sorted()
+        return scores[scores.size / 2]
     }
 
     val testInput = readInput(year, day, Input.Test)
     check(part1(testInput) == 26397)
-//    check(part2(testInput) == 1)
+    check(part2(testInput) == 288957L)
 
     val input = readInput(year, day, Input.Real)
     println("Day $day, part one: ${part1(input)}")
