@@ -41,52 +41,31 @@ fun main() {
     fun part1(input: List<String>): Long {
         val alu = ALU(input.map { it.split(' ') })
 
-        val answers = mutableMapOf<Int, Set<Long>>()
+        val model = "96918996924991"
 
-        val p1314 = (9 downTo 1).flatMap { i -> (9 downTo 1).map { j -> listOf(i, j) } }.filter { (i, j) -> i == j }
-        val p1112 = (9 downTo 1).flatMap { i -> (9 downTo 1).map { j -> listOf(i, j) } }.filter { (i, j) -> j - i == 5 }
-        val p910 = (9 downTo 1).flatMap { i -> (9 downTo 1).map { j -> listOf(i, j) } }.filter { (i, j) -> j - i == 6 }
-        val p78 = (9 downTo 1).flatMap { i -> (9 downTo 1).map { j -> listOf(i, j) } }.filter { (i, j) -> i - j == 3 }
-        val p56 = (9 downTo 1).flatMap { i -> (9 downTo 1).map { j -> listOf(i, j) } }.filter { (i, j) -> j - i == 1 }
-        val p34 = (9 downTo 1).flatMap { i -> (9 downTo 1).map { j -> listOf(i, j) } }
+        val ans = alu.compute(model.map { it.digitToInt() }).toLong()
 
-        for (i in 99 downTo 11) {
+        println("Div: ${ans / 26}")
+        println("Remainder: ${ans % 26}")
 
-            println(i)
-
-            for (a in p34) {
-                for (b in p56) {
-                    for (c in p78) {
-                        for (d in p910) {
-                            for (e in p1112) {
-                                for (f in p1314) {
-                                    val inp = i.toString().map { it.digitToInt() } + a + b + c + d + e + f
-                                    if (0 in inp) {
-                                        continue
-                                    }
-                                    val ans = alu.compute(inp)
-                                    answers[ans] = (answers[ans] ?: emptySet()) + i.toLong()
-                                    if (ans == 0) {
-                                        return inp.map { it.toString() }.joinToString("").toLong()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        }
-
-        return -1
+        return ans
     }
 
-    fun part2(input: List<String>): Int {
-        return 0
+    fun part2(input: List<String>): Long {
+        val alu = ALU(input.map { it.split(' ') })
+
+        val model = "91811241911641"
+
+        val ans = alu.compute(model.map { it.digitToInt() }).toLong()
+
+        println("Div: ${ans / 26}")
+        println("Remainder: ${ans % 26}")
+
+        return ans
     }
 
 //    val testInput = readInput(year, day, Input.Test)
-//    check(part1(testInput) == 1)
+//    check(part1(testInput) == 0L)
 //    check(part2(testInput) == 1)
 
     val input = readInput(year, day, Input.Real)
