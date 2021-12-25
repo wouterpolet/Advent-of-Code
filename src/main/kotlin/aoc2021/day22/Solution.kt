@@ -38,7 +38,7 @@ data class Cube(val lower: Coordinate, val upper: Coordinate) {
             result.add(outerDown)
 
         val (_, outerInward) = innerUp.splitZ(other.upper.z, other.upper.z + 1)
-        if (outerInward.isValid() && !outerInward.overlaps(other))
+        if (outerInward.isValid())
             result.add(outerInward)
 
 
@@ -46,12 +46,9 @@ data class Cube(val lower: Coordinate, val upper: Coordinate) {
     }
 
     fun overlaps(other: Cube): Boolean {
-        return (lower.x <= other.upper.x && lower.x >= other.lower.x) ||
-                (lower.y <= other.upper.y && lower.y >= other.lower.y) ||
-                (lower.z <= other.upper.z && lower.z >= other.lower.z) ||
-                (upper.x <= other.upper.x && upper.x >= other.lower.x) ||
-                (upper.y <= other.upper.y && upper.y >= other.lower.y) ||
-                (upper.z <= other.upper.z && upper.z >= other.lower.z)
+        return (lower.x <= other.upper.x && upper.x >= other.lower.x
+                && lower.y <= other.upper.y && upper.y >= other.lower.y
+                && lower.z <= other.upper.z && upper.z >= other.lower.z)
     }
 
     fun splitX(lowX: Int, highX: Int): Pair<Cube, Cube> {
@@ -132,10 +129,8 @@ fun main() {
         input.forEach {
             val (switch, range) = it.split(' ')
             val (xs, ys, zs) = range.split(',').map { it.split('=')[1].split("..").map { it.toInt() } }
-            if ((xs + ys + zs).all { it >= -50 && it <= 50 }) {
-                val newCube = Cube(Coordinate(xs[0], ys[0], zs[0]), Coordinate(xs[1], ys[1], zs[1]))
-                cubes = cubes.flatMap { it - newCube } + (if (switch == "on") listOf(newCube) else emptyList())
-            }
+            val newCube = Cube(Coordinate(xs[0], ys[0], zs[0]), Coordinate(xs[1], ys[1], zs[1]))
+            cubes = cubes.flatMap { it - newCube } + (if (switch == "on") listOf(newCube) else emptyList())
         }
         return cubes.sumOf { it.volume() }
     }
@@ -146,7 +141,7 @@ fun main() {
 //    check(part1(testInput) == 590784)
     val part2Value = part2(testInput)
     println("Part 2 test: $part2Value")
-    check(part2Value == 590784.toLong())
+//    check(part2Value == 590784.toLong())
 
     val input = readInput(year, day, Input.Real)
     println("Day $day, part one: ${part1(input)}")
