@@ -1,0 +1,1 @@
+/home/wpolet/Projects/advent-of-code/rust/target/debug/advent-of-code: /home/wpolet/Projects/advent-of-code/rust/src/aoc2015/day01.rs /home/wpolet/Projects/advent-of-code/rust/src/aoc2015/day11.rs /home/wpolet/Projects/advent-of-code/rust/src/aoc2015/day12.rs /home/wpolet/Projects/advent-of-code/rust/src/aoc2015/mod.rs /home/wpolet/Projects/advent-of-code/rust/src/main.rs
