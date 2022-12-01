@@ -3,6 +3,7 @@ extern crate core;
 use std::{env, fs};
 
 mod aoc2015;
+mod aoc2022;
 
 pub trait DaySolver {
     fn solve_part1(&self, input: &str) -> String;
@@ -27,6 +28,7 @@ trait YearSolver {
 fn get_year_solver(year: &i32) -> Option<&dyn YearSolver> {
     match year {
         2015 => Some(&aoc2015::Year2015),
+        2022 => Some(&aoc2022::Year2022),
         _ => None
     }
 }
