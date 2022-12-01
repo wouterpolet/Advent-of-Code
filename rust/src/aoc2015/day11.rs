@@ -50,7 +50,7 @@ impl Day11 {
 }
 
 impl DaySolver for Day11 {
-    fn solve_part1(&self, input: &str) -> String {
+    fn solve_part1_str(&self, input: &str) -> String {
         let mut password: String = input.to_string();
         loop {
             password = self.increment_password(password);
@@ -60,7 +60,7 @@ impl DaySolver for Day11 {
         }
     }
 
-    fn solve_part2(&self, input: &str) -> String {
-        self.solve_part1(&*self.solve_part1(input))
+    fn solve_part2_str(&self, input: &str) -> String {
+        self.solve_part1_str(&*self.solve_part1_str(input))
     }
 }

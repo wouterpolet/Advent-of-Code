@@ -6,8 +6,26 @@ mod aoc2015;
 mod aoc2022;
 
 pub trait DaySolver {
-    fn solve_part1(&self, input: &str) -> String;
-    fn solve_part2(&self, input: &str) -> String;
+    fn solve_part1_str(&self, input: &str) -> String {
+        self.solve_part1_i64(input).to_string()
+    }
+    fn solve_part2_str(&self, input: &str) -> String {
+        self.solve_part2_i64(input).to_string()
+    }
+
+    fn solve_part1_i64(&self, input: &str) -> i64 {
+        self.solve_part1(input) as i64
+    }
+    fn solve_part2_i64(&self, input: &str) -> i64 {
+        self.solve_part2(input) as i64
+    }
+
+    fn solve_part1(&self, input: &str) -> i32 {
+        panic!("No solution has been implemented for part one.")
+    }
+    fn solve_part2(&self, input: &str) -> i32 {
+        panic!("No solution has been implemented for part two.")
+    }
 }
 
 trait YearSolver {
@@ -16,8 +34,8 @@ trait YearSolver {
     fn solve(&self, day: &i32, part: &i32, input: &str) -> Option<String> {
         match self.get_day_solver(day) {
             Some(day_solver) => match part {
-                1 => Some(day_solver.solve_part1(input)),
-                2 => Some(day_solver.solve_part2(input)),
+                1 => Some(day_solver.solve_part1_str(input)),
+                2 => Some(day_solver.solve_part2_str(input)),
                 _ => None
             }
             None => None
