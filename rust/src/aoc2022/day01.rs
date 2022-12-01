@@ -1,4 +1,3 @@
-use std::ops::{Index, IndexMut};
 use crate::DaySolver;
 
 pub struct Day01;

@@ -20,10 +20,10 @@ pub trait DaySolver {
         self.solve_part2(input) as i64
     }
 
-    fn solve_part1(&self, input: &str) -> i32 {
+    fn solve_part1(&self, _input: &str) -> i32 {
         panic!("No solution has been implemented for part one.")
     }
-    fn solve_part2(&self, input: &str) -> i32 {
+    fn solve_part2(&self, _input: &str) -> i32 {
         panic!("No solution has been implemented for part two.")
     }
 }
