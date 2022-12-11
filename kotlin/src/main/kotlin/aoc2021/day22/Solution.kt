@@ -1,6 +1,6 @@
 package aoc2021.day22
 
-import readInput
+import readInputAsLines
 
 val year = 2021
 val day = 22
@@ -135,7 +135,7 @@ fun main() {
         return cubes.sumOf { it.volume() }
     }
 
-    val testInput = readInput(year, day, Input.Test)
+    val testInput = readInputAsLines(year, day, Input.Test)
     val part1Value = part1(testInput)
     println("Part 1 test: $part1Value")
 //    check(part1(testInput) == 590784)
@@ -143,7 +143,7 @@ fun main() {
     println("Part 2 test: $part2Value")
 //    check(part2Value == 590784.toLong())
 
-    val input = readInput(year, day, Input.Real)
+    val input = readInputAsLines(year, day, Input.Real)
     println("Day $day, part one: ${part1(input)}")
     println("Day $day, part two: ${part2(input)}")
 }

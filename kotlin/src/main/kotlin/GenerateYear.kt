@@ -1,28 +1,26 @@
 import kotlin.io.path.Path
-import kotlin.io.path.exists
 
 fun generateYear(year: Int) {
-    val folderPath = Path("src", "main", "kotlin", "aoc$year")
-    if (folderPath.exists()) {
-        println("Year $year already exists!")
-        return
-    }
-    val template = Path("src", "main", "kotlin", "template").toFile()
+    val template = Path("kotlin", "src", "main", "kotlin", "template").toFile()
     for (day in 1..25) {
         val dayString = "day" + if (day < 10) "0$day" else day
-        val dayFile = Path("src", "main", "kotlin", "aoc$year", dayString).toFile()
-        template.copyRecursively(dayFile)
-        val solutionFile = Path("src", "main", "kotlin", "aoc$year", dayString, "Solution.kt").toFile()
-        val original = solutionFile.readText()
-        solutionFile.writeText(
-            original
-                .replace("package template", "package aoc$year.$dayString")
-                .replace("val year = 0", "val year = $year")
-                .replace("val day = 0", "val day = $day")
-        )
+        val dayFile = Path("kotlin", "src", "main", "kotlin", "aoc$year", dayString).toFile()
+        if (!dayFile.exists()) {
+            template.copyRecursively(dayFile)
+            val solutionFile = Path("kotlin", "src", "main", "kotlin", "aoc$year", dayString, "Solution.kt").toFile()
+            val original = solutionFile.readText()
+            solutionFile.writeText(
+                original
+                    .replace("package template", "package aoc$year.$dayString")
+                    .replace("Day00Solver", "Day${if (day < 10) "0$day" else day}Solver")
+                    .replace("Solver(0, 0)", "Solver($year, $day)")
+            )
+        } else {
+            println("Day $day of year $year already exists!")
+        }
     }
 }
 
 fun main() {
-    generateYear(2015)
+    generateYear(2022)
 }

@@ -1,6 +1,6 @@
 package aoc2022.day11
 
-import readInput
+import Solver
 import java.lang.Integer.parseInt
 import java.lang.Long.parseLong
 import java.lang.NumberFormatException
@@ -63,9 +63,9 @@ data class Monkey(
     }
 }
 
-fun main() {
-    fun part1(input: List<String>): Int {
-        val monkeys = input.joinToString("\n").split("\n\n").map { Monkey.parse(it) }
+object Day11Solver : Solver(2022, 11) {
+    override fun solvePartOne(input: String): Int {
+        val monkeys = input.split("\n\n").map { Monkey.parse(it) }
 
         for (_it in 1..20) {
             monkeys.forEach { it.round(monkeys) }
@@ -74,8 +74,8 @@ fun main() {
         return monkeys.map { it.inspect }.sortedDescending().take(2).reduce { acc, i -> acc * i }
     }
 
-    fun part2(input: List<String>): Long {
-        val monkeys = input.joinToString("\n").split("\n\n").map { Monkey.parse(it) }
+    override fun solvePartTwoLong(input: String): Long {
+        val monkeys = input.split("\n\n").map { Monkey.parse(it) }
 
         for (_it in 1..10000) {
             monkeys.forEach { it.roundTwo(monkeys) }
@@ -84,12 +84,8 @@ fun main() {
         val res = monkeys.map { it.inspect }.sortedDescending().take(2)
         return res[0].toLong() * res[1].toLong()
     }
+}
 
-//    val testInput = readInput(year, day, Input.Test)
-//    check(part1(testInput) == 1)
-//    check(part2(testInput) == 1)
-
-    val input = readInput(year, day, Input.Real)
-    println("Day $day, part one: ${part1(input)}")
-    println("Day $day, part two: ${part2(input)}")
+fun main() {
+    Day11Solver.solve()
 }

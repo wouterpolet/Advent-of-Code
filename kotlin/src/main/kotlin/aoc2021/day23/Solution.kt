@@ -1,7 +1,7 @@
 package aoc2021.day23
 
 import plus
-import readInput
+import readInputAsLines
 import java.util.*
 
 val year = 2021
@@ -128,12 +128,12 @@ fun main() {
         return costs[mapToKey(amphipodRooms)] ?: -1
     }
 
-    val testInput = readInput(year, day, Input.Test)
+    val testInput = readInputAsLines(year, day, Input.Test)
     val testPart1 = solution(testInput)
     println("Part 1 test output: $testPart1")
     check(testPart1 == 12521)
 
-    val input = readInput(year, day, Input.Real)
+    val input = readInputAsLines(year, day, Input.Real)
     println("Day $day, part one: ${solution(input)}")
 
     amphipodRooms = mapOf(
@@ -145,11 +145,11 @@ fun main() {
     rooms = amphipodRooms.values.flatten().toSet()
 
 
-    val testInput2 = readInput(year, day, "test2")
+    val testInput2 = readInputAsLines(year, day, "test2")
     val testPart2 = solution(testInput2)
     println("Part 2 test output: $testPart2")
     check(testPart2 == 44169)
 
-    val input2 = readInput(year, day, "input2")
+    val input2 = readInputAsLines(year, day, "input2")
     println("Day $day, part two: ${solution(input2)}")
 }

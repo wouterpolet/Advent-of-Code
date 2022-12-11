@@ -1,6 +1,6 @@
 package aoc2015.day08
 
-import readInput
+import readInputAsLines
 
 val year = 2015
 val day = 8
@@ -41,12 +41,12 @@ fun main() {
         }.toInt()} + input.size * 2
     }
 
-    val testInput = readInput(year, day, Input.Test)
+    val testInput = readInputAsLines(year, day, Input.Test)
     println(part1(testInput))
     check(part1(testInput) == 12)
 //    check(part2(testInput) == 1)
 
-    val input = readInput(year, day, Input.Real)
+    val input = readInputAsLines(year, day, Input.Real)
     println("Day $day, part one: ${part1(input)}")
     println("Day $day, part two: ${part2(input)}")
 }

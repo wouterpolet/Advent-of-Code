@@ -1,7 +1,7 @@
 package aoc2021.day20
 
 import plus
-import readInput
+import readInputAsLines
 
 val year = 2021
 val day = 20
@@ -93,11 +93,11 @@ fun main() {
         return lit.values.count { it }
     }
 
-    val testInput = readInput(year, day, Input.Test)
+    val testInput = readInputAsLines(year, day, Input.Test)
     check(part1(testInput) == 35)
     check(part2(testInput) == 3351)
 
-    val input = readInput(year, day, Input.Real)
+    val input = readInputAsLines(year, day, Input.Real)
     println("Day $day, part one: ${part1(input)}")
     println("Day $day, part two: ${part2(input)}")
 }

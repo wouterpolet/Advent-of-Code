@@ -7,15 +7,19 @@ enum class Input(val path: String) {
     Test("test")
 }
 
-fun readInput(year: Int, day: Int, instance: Input) = readInput(year, day, instance.path)
+fun readInputAsLines(year: Int, day: Int, instance: Input) = readInputAsLines(year, day, instance.path)
 
 /**
  * Reads lines from the given input txt file.
  */
+fun readInputAsLines(year: Int, day: Int, name: String) = readInput(year, day, name).lines()
+
+fun readInput(year: Int, day: Int, instance: Input) = readInput(year, day, instance.path)
+
 fun readInput(year: Int, day: Int, name: String) = Path(
     "kotlin",
     "src", "main", "kotlin", "aoc$year", "day${if (day < 10) "0$day" else day}", "$name.txt"
-).toFile().readLines()
+).toFile().readText()
 
 /**
  * Converts string to md5 hash.

@@ -1,6 +1,6 @@
 package aoc2021.day09
 
-import readInput
+import readInputAsLines
 
 val year = 2021
 val day = 9
@@ -52,12 +52,12 @@ fun main() {
         return basins.values.toSet().map { it.size }.sortedDescending().take(3).reduce(Int::times)
     }
 
-    val testInput = readInput(year, day, Input.Test)
+    val testInput = readInputAsLines(year, day, Input.Test)
     check(part1(testInput) == 15)
     println(part2(testInput))
 //    check(part2(testInput) == 1134)
 
-    val input = readInput(year, day, Input.Real)
+    val input = readInputAsLines(year, day, Input.Real)
     println("Day $day, part one: ${part1(input)}")
     println("Day $day, part two: ${part2(input)}")
 }

@@ -1,6 +1,6 @@
 package aoc2021.day02
 
-import readInput
+import readInputAsLines
 
 val year = 2021
 val day = 2
@@ -56,13 +56,13 @@ fun main() {
             .reduce(Int::times)
 
 
-    val testInput = readInput(year, day, Input.Test)
+    val testInput = readInputAsLines(year, day, Input.Test)
 //    check(part1(testInput) == 1)
     println(part2OneLine(testInput))
     check(part2(testInput) == 900)
     check(part2OneLine(testInput) == 900)
 
-    val input = readInput(year, day, Input.Real)
+    val input = readInputAsLines(year, day, Input.Real)
     println("Day $day, part one: ${part1(input)}")
     println("Day $day, part one (one line): ${part1OneLine(input)}")
     println("Day $day, part two: ${part2(input)}")

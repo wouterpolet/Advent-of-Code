@@ -1,7 +1,7 @@
 package aoc2021.day18
 
 import combinations
-import readInput
+import readInputAsLines
 
 val year = 2021
 val day = 18
@@ -174,11 +174,11 @@ fun main() {
         }.maxOrNull() ?: -1
     }
 
-    val testInput = readInput(year, day, Input.Test)
+    val testInput = readInputAsLines(year, day, Input.Test)
     check(part1(testInput) == 4140)
     check(part2(testInput) == 3993)
 
-    val input = readInput(year, day, Input.Real)
+    val input = readInputAsLines(year, day, Input.Real)
     println("Day $day, part one: ${part1(input)}")
     println("Day $day, part two: ${part2(input)}")
 }
