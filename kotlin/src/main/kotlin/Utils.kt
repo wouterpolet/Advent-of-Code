@@ -35,3 +35,4 @@ fun <T> List<T>.permutations(): List<List<T>> =
 fun <T> List<T>.combinations(): List<Pair<T, T>> = flatMapIndexed { i, x -> filterIndexed { index, _ -> index != i }.map { y -> Pair(x, y) } }
 
 operator fun Pair<Int, Int>.plus(p: Pair<Int, Int>): Pair<Int, Int> = Pair(first + p.first, second + p.second)
+operator fun Pair<Int, Int>.minus(p: Pair<Int, Int>): Pair<Int, Int> = Pair(first - p.first, second - p.second)
