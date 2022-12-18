@@ -353,8 +353,9 @@ object Day16Solver : Solver(2022, 16) {
 
     fun getOptimalWithForwardElephantSteps(paths: Map<String, List<Pair<String, Int>>>, rates: Map<String, Int>): Int {
         val minutes = 26
-        var acc: MutableMap<Pair<String, String>, MutableMap<Set<String>, Int>> = mutableMapOf(Pair(Pair("AA", "AA"), mutableMapOf()))
+        var acc: MutableMap<Pair<String, String>, MutableMap<Set<String>, Int>> = mutableMapOf(Pair(Pair("AA", "AA"), mutableMapOf(Pair(emptySet(), 0))))
         for (minute in 1 until minutes) {
+            println("Processing minute $minute")
             val newAcc: MutableMap<Pair<String, String>, MutableMap<Set<String>, Int>> = mutableMapOf()
             for (entry in acc.entries) {
                 val prevSpots = entry.key
@@ -383,9 +384,11 @@ object Day16Solver : Solver(2022, 16) {
                             }
                         }
                     }
+                }
+                for (newElephant in paths[prevSpots.second]!!.filter { it.second == 1 }.map { it.first }) {
                     // Elephant moving
                     if (rates[prevSpots.first]!! > 0) {
-                        val newPair = Pair(prevSpots.first, newMyValve)
+                        val newPair = Pair(prevSpots.first, newElephant)
                         if (!newAcc.contains(newPair)) newAcc[newPair] = mutableMapOf()
                         for (prev in prevValues) {
                             if (prev.key.contains(prevSpots.first)) continue
@@ -396,16 +399,17 @@ object Day16Solver : Solver(2022, 16) {
                             }
                         }
                     }
-                    // Neither moving
-                    if (rates[prevSpots.first]!! > 0 && rates[prevSpots.second]!! > 0) {
-                        if (!newAcc.contains(prevSpots)) newAcc[prevSpots] = mutableMapOf()
-                        for (prev in prevValues) {
-                            if (prev.key.contains(prevSpots.first) || prev.key.contains(prevSpots.second)) continue
-                            val newSet = prev.key + setOf(prevSpots.first, prevSpots.second)
-                            val newValue = prev.value + (minutes - minute) * (rates[prevSpots.first]!! + rates[prevSpots.second]!!)
-                            if ((newAcc[prevSpots]!![newSet] ?: -1) < newValue) {
-                                newAcc[prevSpots]!![newSet] = newValue
-                            }
+                }
+                // Neither moving
+                if (rates[prevSpots.first]!! > 0 && rates[prevSpots.second]!! > 0) {
+                    if (prevSpots.first == prevSpots.second) continue
+                    if (!newAcc.contains(prevSpots)) newAcc[prevSpots] = mutableMapOf()
+                    for (prev in prevValues) {
+                        if (prev.key.contains(prevSpots.first) || prev.key.contains(prevSpots.second)) continue
+                        val newSet = prev.key + setOf(prevSpots.first, prevSpots.second)
+                        val newValue = prev.value + (minutes - minute) * (rates[prevSpots.first]!! + rates[prevSpots.second]!!)
+                        if ((newAcc[prevSpots]!![newSet] ?: -1) < newValue) {
+                            newAcc[prevSpots]!![newSet] = newValue
                         }
                     }
                 }
@@ -509,7 +513,7 @@ object Day16Solver : Solver(2022, 16) {
             pathsRev[dest] = l
         }
 
-        return getOptimalWithForwardElephantSteps(pathsRev, rates)
+        return getOptimalWithForwardElephantSteps(paths, rates)
     }
 }
 
