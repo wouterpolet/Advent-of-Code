@@ -1,6 +1,8 @@
 package aoc2022.day16
 
 import Solver
+import java.util.PriorityQueue
+import kotlin.math.min
 
 object Day16Solver : Solver(2022, 16) {
 
@@ -419,6 +421,78 @@ object Day16Solver : Solver(2022, 16) {
         return acc.values.maxOfOrNull { it.maxOfOrNull { it.value } ?: -1 } ?: -1
     }
 
+    fun getOptimalWithForwardElephantFast(paths: Map<String, List<Pair<String, Int>>>, rates: Map<String, Int>): Int {
+        val duration = 26
+        val acc: MutableMap<Pair<Pair<String, Int>, Pair<String, Int>>, MutableMap<Set<String>, Int>> = mutableMapOf(Pair(Pair(Pair("AA", 0), Pair("AA", 0)), mutableMapOf(Pair(emptySet(), 0))))
+        val qPrio = PriorityQueue<Pair<Pair<String, Int>, Pair<String, Int>>> { p1, p2 ->
+            min(p1.first.second, p1.second.second).compareTo(min(p2.first.second, p2.second.second))
+        }
+        qPrio.add(Pair(Pair("AA", 0), Pair("AA", 0)))
+        var result = -1
+        var maxMinute = 0
+
+        while (!qPrio.isEmpty()) {
+            val prevSpots = qPrio.poll()
+            if (min(prevSpots.first.second, prevSpots.second.second) > maxMinute) {
+                maxMinute = min(prevSpots.first.second, prevSpots.second.second)
+                println("Starting minute $maxMinute")
+            }
+            acc.keys.filter { min(it.first.second, it.second.second) < min(prevSpots.first.second, prevSpots.second.second) }.forEach { acc.remove(it) }
+            val (myPrevValve, elephantPrevValve) = prevSpots
+            val prevSets = acc[prevSpots]!!
+            for (newValve in paths[myPrevValve.first]!!) {
+                if (rates[newValve.first]!! == 0
+                    || newValve.second + myPrevValve.second >= duration) continue
+                val newValvesMe = Pair(
+                    Pair(newValve.first, newValve.second + myPrevValve.second + 1),
+                    elephantPrevValve
+                )
+
+                if (!acc.contains(newValvesMe)) acc[newValvesMe] = mutableMapOf()
+
+                for ((prevOpenValves, prevScore) in prevSets) {
+                    if (prevOpenValves.contains(newValve.first)) continue
+                    val newScoreMe = prevScore +
+                            (duration - newValvesMe.first.second) * rates[newValve.first]!!
+                    val newSet = prevOpenValves + setOf(newValve.first)
+                    if ((acc[newValvesMe]!![newSet] ?: -1) < newScoreMe) {
+                        acc[newValvesMe]!![newSet] = newScoreMe
+                        if (newScoreMe > result)
+                            result = newScoreMe
+                        if (!qPrio.contains(newValvesMe)) qPrio.add(newValvesMe)
+                    }
+
+                }
+            }
+            for (newValve in paths[elephantPrevValve.first]!!) {
+                if (rates[newValve.first]!! == 0
+                    || newValve.second + elephantPrevValve.second >= duration) continue
+
+                val newValvesElephant = Pair(
+                    myPrevValve,
+                    Pair(newValve.first, newValve.second + elephantPrevValve.second + 1),
+                )
+
+                if (!acc.contains(newValvesElephant)) acc[newValvesElephant] = mutableMapOf()
+
+                for ((prevOpenValves, prevScore) in prevSets) {
+                    if (prevOpenValves.contains(newValve.first)) continue
+                    val newScoreElephant = prevScore +
+                            (duration - newValvesElephant.second.second) * rates[newValve.first]!!
+                    val newSet = prevOpenValves + setOf(newValve.first)
+                    if ((acc[newValvesElephant]!![newSet] ?: -1) < newScoreElephant) {
+                        acc[newValvesElephant]!![newSet] = newScoreElephant
+                        if (newScoreElephant > result)
+                            result = newScoreElephant
+                        if (!qPrio.contains(newValvesElephant)) qPrio.add(newValvesElephant)
+                    }
+                }
+            }
+        }
+
+        return result
+    }
+
     fun findPath(origin: String, dest: String, tunnels: Map<String, List<String>>): Int? {
         val q = mutableListOf<Pair<String, Int>>()
         val visited = mutableSetOf<String>()
@@ -491,7 +565,7 @@ object Day16Solver : Solver(2022, 16) {
             tunnels[valve] = dest.split(", ")
         }
         for (origin in tunnels.keys) {
-            val l = mutableListOf(Pair(origin, 0))
+            val l = mutableListOf<Pair<String, Int>>()
             for (dest in tunnels.keys) {
                 if (origin != dest) {
                     val res = findPath(origin, dest, tunnels)
@@ -513,7 +587,7 @@ object Day16Solver : Solver(2022, 16) {
             pathsRev[dest] = l
         }
 
-        return getOptimalWithForwardElephantSteps(paths, rates)
+        return getOptimalWithForwardElephantFast(paths, rates)
     }
 }
 
