@@ -423,24 +423,55 @@ object Day16Solver : Solver(2022, 16) {
 
     fun getOptimalWithForwardElephantFast(paths: Map<String, List<Pair<String, Int>>>, rates: Map<String, Int>): Int {
         val duration = 26
-        val acc: MutableMap<Pair<Pair<String, Int>, Pair<String, Int>>, MutableMap<Set<String>, Int>> = mutableMapOf(Pair(Pair(Pair("AA", 0), Pair("AA", 0)), mutableMapOf(Pair(emptySet(), 0))))
-        val qPrio = PriorityQueue<Pair<Pair<String, Int>, Pair<String, Int>>> { p1, p2 ->
-            min(p1.first.second, p1.second.second).compareTo(min(p2.first.second, p2.second.second))
+        val acc: MutableMap<Set<Pair<String, Int>>, MutableMap<Set<String>, Int>> = mutableMapOf(Pair(setOf(Pair("AA", 0)), mutableMapOf(Pair(emptySet(), 0))))
+        val qPrio = PriorityQueue<Set<Pair<String, Int>>> { p1, p2 ->
+            p1.minOf { it.second }.compareTo(p2.minOf { it.second })
         }
-        qPrio.add(Pair(Pair("AA", 0), Pair("AA", 0)))
+
+        qPrio.add(setOf(Pair("AA", 0)))
         var result = -1
         var maxMinute = 0
 
         while (!qPrio.isEmpty()) {
             val prevSpots = qPrio.poll()
-            if (min(prevSpots.first.second, prevSpots.second.second) > maxMinute) {
-                maxMinute = min(prevSpots.first.second, prevSpots.second.second)
+            if (prevSpots.minOf { it.second } > maxMinute) {
+                maxMinute = prevSpots.minOf { it.second }
                 println("Starting minute $maxMinute")
             }
-            acc.keys.filter { min(it.first.second, it.second.second) < min(prevSpots.first.second, prevSpots.second.second) }.forEach { acc.remove(it) }
-            val (myPrevValve, elephantPrevValve) = prevSpots
+            acc.keys.toList().forEach {
+                if (it.minOf { it.second } < prevSpots.minOf { it.second })
+                    acc.remove(it)
+            }
             val prevSets = acc[prevSpots]!!
-            for (newValve in paths[myPrevValve.first]!!) {
+            for (prevValve in prevSpots) {
+                for (nextValve in paths[prevValve.first]!!) {
+                    if (nextValve.second + prevValve.second >= duration) continue
+                    if (prevSpots.any { it.first == nextValve.first }) continue
+                    val newValve = Pair(nextValve.first, nextValve.second + prevValve.second + 1)
+                    val newValves = (if (prevSpots.size == 1) prevSpots else prevSpots - prevValve) + newValve
+
+                    if (!acc.contains(newValves)) acc[newValves] = mutableMapOf()
+
+                    for ((prevOpenValves, prevScore) in prevSets) {
+                        if (prevOpenValves.contains(newValve.first)) continue
+                        val newScore = prevScore +
+                                (duration - newValve.second) * rates[newValve.first]!!
+                        val newSet = prevOpenValves + newValve.first
+                        if ((acc[newValves]!![newSet] ?: -1) < newScore) {
+                            acc[newValves]!![newSet] = newScore
+                            if (newScore > result)
+                                result = newScore
+                            if (!qPrio.contains(newValves)) qPrio.add(newValves)
+                        }
+
+                    }
+                }
+            }
+
+
+//            val (myPrevValve, elephantPrevValve) = prevSpots
+//            val prevSets = acc[prevSpots]!!
+            /*for (newValve in paths[myPrevValve.first]!!) {
                 if (rates[newValve.first]!! == 0
                     || newValve.second + myPrevValve.second >= duration) continue
                 val newValvesMe = Pair(
@@ -487,7 +518,7 @@ object Day16Solver : Solver(2022, 16) {
                         if (!qPrio.contains(newValvesElephant)) qPrio.add(newValvesElephant)
                     }
                 }
-            }
+            }*/
         }
 
         return result
@@ -567,6 +598,7 @@ object Day16Solver : Solver(2022, 16) {
         for (origin in tunnels.keys) {
             val l = mutableListOf<Pair<String, Int>>()
             for (dest in tunnels.keys) {
+                if (rates[dest]!! == 0) continue
                 if (origin != dest) {
                     val res = findPath(origin, dest, tunnels)
                     if (res != null)
