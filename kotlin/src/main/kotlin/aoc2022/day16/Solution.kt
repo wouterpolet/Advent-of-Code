@@ -3,6 +3,7 @@ package aoc2022.day16
 import Solver
 import java.util.PriorityQueue
 import kotlin.math.min
+import kotlin.random.Random
 
 object Day16Solver : Solver(2022, 16) {
 
@@ -438,10 +439,10 @@ object Day16Solver : Solver(2022, 16) {
                 maxMinute = prevSpots.minOf { it.second }
                 println("Starting minute $maxMinute")
             }
-            acc.keys.toList().forEach {
-                if (it.minOf { it.second } < prevSpots.minOf { it.second })
-                    acc.remove(it)
-            }
+//            acc.keys.toList().forEach {
+//                if (it.minOf { it.second } < prevSpots.minOf { it.second })
+//                    acc.remove(it)
+//            }
             val prevSets = acc[prevSpots]!!
             for (prevValve in prevSpots) {
                 for (nextValve in paths[prevValve.first]!!) {
@@ -524,12 +525,98 @@ object Day16Solver : Solver(2022, 16) {
         return result
     }
 
+    fun getOptimalWithDynamicElephant(paths: Map<String, List<Pair<String, Int>>>, rates: Map<String, Int>): Int {
+        val duration = 26
+        val acc: MutableMap<Pair<Pair<Int, Int>, Pair<String, String>>, MutableMap<Set<String>, Int>> = mutableMapOf(Pair(Pair(Pair(0, 0), Pair("AA", "AA")), mutableMapOf(Pair(setOf(), 0))))
+
+        val todo: MutableList<Pair<Pair<Int, Int>, Pair<String, String>>> = mutableListOf(Pair(Pair(0, 0), Pair("AA", "AA")))
+
+        while (todo.isNotEmpty()) {
+
+//            val prevPos = todo.minByOrNull { it.first.first + it.first.second }!!
+            if (Random.nextFloat() < 0.00001)
+                println("Todo has size: ${todo.size}")
+            val prevPos = todo.removeLast()
+//            todo.remove(prevPos)
+
+            for ((newMe: String, durMe: Int) in paths[prevPos.second.first]!!) {
+                if (prevPos.first.first + durMe + 1 >= duration)
+                    continue
+
+                for ((newEl: String, durEl: Int) in paths[prevPos.second.second]!!) {
+                    if (prevPos.first.second + durEl + 1 >= duration)
+                        continue
+
+                    val newPos = Pair(Pair(prevPos.first.first + durMe + 1, prevPos.first.second + durEl + 1), Pair(newMe, newEl))
+
+                    for ((opened, oldScore) in acc[prevPos]!!.entries) {
+                        if (opened.contains(newMe) || opened.contains(newEl))
+                            continue
+
+                        val newScore = oldScore + rates[newMe]!! * (duration - newPos.first.first)
+                            + rates[newEl]!! * (duration - newPos.first.second)
+                        val newOpened = opened + setOf(newMe, newEl)
+
+                        if ((acc[newPos]?.get(newOpened) ?: -1) < newScore) {
+                            if (!acc.containsKey(newPos))
+                                acc[newPos] = mutableMapOf()
+                            acc[newPos]!![newOpened] = newScore
+                            todo.add(newPos)
+                        }
+                    }
+                }
+
+                // Only me doing something
+                val newPos = Pair(Pair(prevPos.first.first + durMe + 1, prevPos.first.second), Pair(newMe, prevPos.second.second))
+                for ((opened, oldScore) in acc[prevPos]!!.entries) {
+                    if (opened.contains(newMe))
+                        continue
+
+                    val newScore = oldScore + rates[newMe]!! * (duration - newPos.first.first)
+                    val newOpened = opened + setOf(newMe)
+
+                    if ((acc[newPos]?.get(newOpened) ?: -1) < newScore) {
+                        if (!acc.containsKey(newPos))
+                            acc[newPos] = mutableMapOf()
+                        acc[newPos]!![newOpened] = newScore
+                        todo.add(newPos)
+                    }
+                }
+            }
+
+            // Only el doing something
+            for ((newEl: String, durEl: Int) in paths[prevPos.second.second]!!) {
+                if (prevPos.first.second + durEl + 1 >= duration)
+                    continue
+
+                val newPos = Pair(Pair(prevPos.first.first, prevPos.first.second + durEl + 1), Pair(prevPos.second.first, newEl))
+
+                for ((opened, oldScore) in acc[prevPos]!!.entries) {
+                    if (opened.contains(newEl))
+                        continue
+
+                    val newScore = oldScore + rates[newEl]!! * (duration - newPos.first.second)
+                    val newOpened = opened + setOf(newEl)
+
+                    if ((acc[newPos]?.get(newOpened) ?: -1) < newScore) {
+                        if (!acc.containsKey(newPos))
+                            acc[newPos] = mutableMapOf()
+                        acc[newPos]!![newOpened] = newScore
+                        todo.add(newPos)
+                    }
+                }
+            }
+        }
+
+        return acc.maxOf { inner -> inner.value.values.maxOf { it } }
+    }
+
     fun findPath(origin: String, dest: String, tunnels: Map<String, List<String>>): Int? {
         val q = mutableListOf<Pair<String, Int>>()
         val visited = mutableSetOf<String>()
         q.add(Pair(origin, 0))
         visited.add(origin)
-        while (!q.isEmpty()) {
+        while (q.isNotEmpty()) {
             val curr = q.removeFirst()
             if (curr.first == dest) {
                 return curr.second
@@ -619,12 +706,12 @@ object Day16Solver : Solver(2022, 16) {
             pathsRev[dest] = l
         }
 
-        return getOptimalWithForwardElephantFast(paths, rates)
+        return getOptimalWithDynamicElephant(paths, rates)
     }
 }
 
 fun main() {
-    Day16Solver.runPartOneTest()
+//    Day16Solver.runPartOneTest()
     Day16Solver.runPartTwoTest()
 
     Day16Solver.solve()
