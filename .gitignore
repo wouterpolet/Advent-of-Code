@@ -6,6 +6,7 @@
 **/.gradle/
 
 **/target
+kotlin/bin/
 
 
 # Added by cargo

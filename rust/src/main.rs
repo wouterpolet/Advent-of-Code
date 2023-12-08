@@ -4,6 +4,7 @@ use std::{env, fs};
 
 mod aoc2015;
 mod aoc2022;
+mod aoc2023;
 
 pub trait DaySolver {
     fn solve_part1_str(&self, input: &str) -> String {
@@ -47,6 +48,7 @@ fn get_year_solver(year: &i32) -> Option<&dyn YearSolver> {
     match year {
         2015 => Some(&aoc2015::Year2015),
         2022 => Some(&aoc2022::Year2022),
+        2023 => Some(&aoc2023::Year2023),
         _ => None
     }
 }
